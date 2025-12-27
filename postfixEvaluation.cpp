@@ -1,6 +1,7 @@
 #include<iostream>
 #include<cctype>
 using namespace std;
+
 #define MAXSIZE 100
 
 int s[MAXSIZE];
@@ -15,13 +16,13 @@ void display_stack();
 int stackSize();
 void stack_initialize();
 
-int evaluatePostfix(string expr);
+int evaluatePostfix(string line);
 
-// ========== stack functions ==========
 void push(int value)
 {
-    if(isStackFull()){
-        cout<<"\tOverflow!!! Stack is Full ...";
+    if (isStackFull())
+    {
+        cout << "\tOverflow!!! Stack is Full ...\n";
     }
     else
     {
@@ -32,12 +33,13 @@ void push(int value)
 
 int pop()
 {
-    if(isStackEmpty())
+    if (isStackEmpty())
     {
-        cout<<"\tUnderflow!!! Stack is Empty...";
+        cout << "\tUnderflow!!! Stack is Empty...\n";
         return -1;
     }
-    else{
+    else
+    {
         top--;
         return s[top];
     }
@@ -60,18 +62,21 @@ int stackSize()
 
 void display_stack()
 {
-    for(int i = top - 1; i >= 0; i--){
+    for (int i = top - 1; i >= 0; i--)
+    {
         cout << "\t\t" << s[i] << endl;
     }
 }
 
 int topp()
 {
-    if(isStackEmpty()){
-        cout<<"\tStack is Empty...";
+    if (isStackEmpty())
+    {
+        cout << "\tStack is Empty...\n";
         return -1;
     }
-    else{
+    else
+    {
         return s[top - 1];
     }
 }
@@ -81,31 +86,42 @@ void stack_initialize()
     top = 0;
 }
 
-int evaluatePostfix(string expr)
+int evaluatePostfix(string line)
 {
     stack_initialize();
-    for(int i = 0; i < (int)expr.length(); i++)
+    for (int i = 0; i < line.length(); i++)
     {
-        char c = expr[i];
-        if(c == ' ') continue;
-
-        if(isdigit(c))
+        char ch = line[i];
+        if (ch == ' ') continue;
+        if (isdigit(ch))
         {
-            push(c - '0'); // single digit
+            push(ch - '0');
+        }
+        else if (ch == '+' || ch == '-' || ch == '*' || ch == '/')
+        {
+            int number1 = pop();
+            int number2 = pop();
+            int result= 0;
+            switch (ch)
+            {
+                case '+': result= number1 + number2; break;
+                case '-': result= number1 - number2; break;
+                case '*': result= number1 * number2; break;
+                case '/': 
+                    if (number2 != 0) {
+                        result= number1 / number2; 
+                    }
+                    break;
+                default: 
+                    cout << "Invalid operator\n";
+                    return -1;
+            }
+            push(result);
         }
         else
         {
-            int op2 = pop();
-            int op1 = pop();
-            int res = 0;
-            switch(c)
-            {
-                case '+': res = op1 + op2; break;
-                case '-': res = op1 - op2; break;
-                case '*': res = op1 * op2; break;
-                case '/': res = op1 / op2; break;
-            }
-            push(res);
+            cout << "Invalid character in expression: " << ch << endl;
+            return -1;
         }
     }
     return topp();
@@ -114,11 +130,9 @@ int evaluatePostfix(string expr)
 int main()
 {
     string post;
-    cout << "Enter postfix expression (single digits): ";
-    getline(cin, post);
-
+    cout << "Enter postfix: ";
+    cin >> post;
     int ans = evaluatePostfix(post);
     cout << "Result = " << ans << endl;
-
     return 0;
 }

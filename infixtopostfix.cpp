@@ -1,14 +1,15 @@
 #include<iostream>
 #include<cctype>
 using namespace std;
-#define MAXSIZE 100
 
-int s[MAXSIZE];
+#define MAXSIZE 10
+
+char s[MAXSIZE];
 int top;
 
-void push(int value);
-int pop();
-int topp();
+void push(char value);
+char pop();
+char topp();
 bool isStackEmpty();
 bool isStackFull();
 void display_stack();
@@ -17,13 +18,12 @@ void stack_initialize();
 
 int precedence(char op);
 bool isOperator(char c);
-string infixToPostfix(string expr);
+string infixToPostfix(string line);
 
-// ========== stack functions ==========
-void push(int value)
+void push(char value)
 {
     if(isStackFull()){
-        cout<<"\tOverflow!!! Stack is Full ...";
+        cout << "\tOverflow!!! Stack is Full ...";
     }
     else
     {
@@ -32,14 +32,14 @@ void push(int value)
     }
 }
 
-int pop()
+char pop()
 {
     if(isStackEmpty())
     {
-        cout<<"\tUnderflow!!! Stack is Empty...";
+        cout << "\tUnderflow!!! Stack is Empty...";
         return -1;
     }
-    else{
+    else {
         top--;
         return s[top];
     }
@@ -67,13 +67,13 @@ void display_stack()
     }
 }
 
-int topp()
+char topp()
 {
     if(isStackEmpty()){
-        cout<<"\tStack is Empty...";
+        cout << "\tStack is Empty...";
         return -1;
     }
-    else{
+    else {
         return s[top - 1];
     }
 }
@@ -83,7 +83,7 @@ void stack_initialize()
     top = 0;
 }
 
-int precedence(char op)
+int checkoperator(char op)
 {
     if(op == '+' || op == '-') return 1;
     if(op == '*' || op == '/') return 2;
@@ -95,46 +95,45 @@ bool isOperator(char c)
     return c == '+' || c == '-' || c == '*' || c == '/';
 }
 
-string infixToPostfix(string expr)
+string infixToPostfix(string line)
 {
     stack_initialize();
     string result = "";
 
-    for(int i = 0; i < (int)expr.length(); i++)
+    for(int i = 0; i < line.length(); i++)
     {
-        char c = expr[i];
-        if(c == ' ') continue;
+        char ch = line[i];
+        if(ch == ' ') continue;
 
-        if(isalnum(c))
+        if(isalnum(ch))
         {
-            result += c;
+            result += ch;
         }
-        else if(c == '(')
+        else if(ch == '(')
         {
-            push(c);
+            push(ch);
         }
-        else if(c == ')')
+        else if(ch == ')')
         {
-            while(!isStackEmpty() && (char)topp() != '(')
+            while(topp() != '(')
             {
-                result += (char)pop();
+                result += pop();  
             }
-            pop(); // remove '('
+            pop();  
         }
         else if(isOperator(c))
         {
-            while(!isStackEmpty() && (char)topp() != '(' &&
-                  precedence((char)topp()) >= precedence(c))
+            while(topp() != '(' && checkoperator(topp()) >= checkoperator(ch))
             {
-                result += (char)pop();
+                result += pop(); 
             }
-            push(c);
+            push(ch);
         }
     }
 
     while(!isStackEmpty())
     {
-        result += (char)pop();
+        result += pop();
     }
 
     return result;
@@ -143,11 +142,9 @@ string infixToPostfix(string expr)
 int main()
 {
     string infix;
-    cout << "Enter infix expression: ";
-    getline(cin, infix);
-
-    string post = infixToPostfix(infix);
-    cout << "Postfix: " << post << endl;
-
+    cout << "Enter infix: ";
+    cin >> infix;
+    string postfix = infixToPostfix(infix);
+    cout << "Postfix: " << postfix << endl;
     return 0;
 }

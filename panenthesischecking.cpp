@@ -13,12 +13,8 @@ bool isStackFull();
 void display_stack();
 int stackSize();
 void stack_initialize();
+bool checkParenthesis(string line);
 
-// extra helpers
-bool arePair(char openB, char closeB);
-bool isBalanced(string expr);
-
-// ========== stack functions ==========
 void push(int value)
 {
     if(isStackFull()){
@@ -82,21 +78,14 @@ void stack_initialize()
     top = 0;
 }
 
-// ========== parentheses checking ==========
-bool arePair(char openB, char closeB)
-{
-    if(openB == '(' && closeB == ')') return true;
-    if(openB == '{' && closeB == '}') return true;
-    if(openB == '[' && closeB == ']') return true;
-    return false;
-}
 
-bool isBalanced(string expr)
+
+bool checkParenthesis(string line)
 {
     stack_initialize();
-    for(int i = 0; i < (int)expr.length(); i++)
+    for(int i = 0; i < line.length(); i++)
     {
-        char ch = expr[i];
+        char ch = line[i];
         if(ch == '(' || ch == '{' || ch == '[')
         {
             push(ch);
@@ -105,7 +94,10 @@ bool isBalanced(string expr)
         {
             if(isStackEmpty()) return false;
             char topChar = (char)pop();
-            if(!arePair(topChar, ch)) return false;
+            if(topChar == '(' && ch == ')') return true;
+            if(topChar == '{' && ch == '}') return true;
+            if(topChar == '[' && ch == ']') return true;
+            return false;
         }
     }
     return isStackEmpty();
@@ -113,14 +105,14 @@ bool isBalanced(string expr)
 
 int main()
 {
-    string exp;
-    cout << "Enter expression: ";
-    getline(cin, exp);
+    string line;
+    cout << "Enter a line: ";
+    cin>>line;
 
-    if(isBalanced(exp))
-        cout << "Balanced\n";
+    if(checkParenthesis(exp))
+        cout << "correct\n";
     else
-        cout << "Not Balanced\n";
+        cout << "Not correct\n";
 
     return 0;
 }
